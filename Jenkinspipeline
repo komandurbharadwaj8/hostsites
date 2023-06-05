@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-#        stage('Clone repository') {
-#            steps {
-#                git 'https://github.com/your-repo.git'
-#            }
-#         }
-
         stage('Build and Push Docker image') {
             steps {
                 sh 'docker build -t firstrepo .'
