@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+
+    stages {
+#        stage('Clone repository') {
+#            steps {
+#                git 'https://github.com/your-repo.git'
+#            }
+#         }
+
+        stage('Build and Push Docker image') {
+            steps {
+                sh 'docker build -t firstrepo .'
+                sh 'docker tag firstrepo bharadwajaws/firstrepo'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                    sh 'docker login -u bharadwajaws -p unzerbrechlichemusik@213'
+                    sh 'docker push bharadwajaws/firstrepo 1df9d9e36d27 '
+                }
+            }
+        }
+
+        stage('Deploy with Ansible') {
+            steps {
+                ansiblePlaybook(
+                    credentialsId: 'ansible-credentials',
+                    playbook: 'playbook.yml',
+                    inventory: 'inventory.ini'
+                )
+            }
+        }
+    }
+}
+
